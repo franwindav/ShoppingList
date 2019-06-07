@@ -1,3 +1,5 @@
+let a =
+  "Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то ";
 let initialState = [
   {
     title:
@@ -9,9 +11,9 @@ let initialState = [
     isDiscount: true,
     percentageDiscount: 40,
     priceDiscount: 38299,
-    about: '',
+    about: a,
     isRead: false,
-    id: 0,
+    id: 0
   },
   {
     imgUrl: "./img/products/2.jpg",
@@ -22,9 +24,9 @@ let initialState = [
     numberRatings: 0,
     price: 42000,
     isDiscount: false,
-    about: '',
+    about: a,
     isRead: false,
-    id: 1,
+    id: 1
   },
   {
     imgUrl: "./img/products/3.jpg",
@@ -36,9 +38,9 @@ let initialState = [
     isDiscount: true,
     percentageDiscount: 25,
     priceDiscount: 10799,
-    about: '',
+    about: a,
     isRead: false,
-    id: 2,
+    id: 2
   },
   {
     imgUrl: "./img/products/4.jpg",
@@ -48,9 +50,9 @@ let initialState = [
     numberRatings: 30,
     price: 3150,
     isDiscount: false,
-    about: '',
+    about: a,
     isRead: false,
-    id: 3,
+    id: 3
   },
   {
     imgUrl: "./img/products/5.jpg",
@@ -62,28 +64,30 @@ let initialState = [
     isDiscount: true,
     percentageDiscount: 10,
     priceDiscount: 5199,
-    about: '',
+    about: a,
     isRead: false,
-    id: 4,
+    id: 4
   }
 ];
 changeMaxMinPrice(initialState);
 export default function products(state = initialState, action) {
   switch (action.type) {
     case "ADD_PRODUCT": {
-      let data = [...state, action.product];
+      let data = [action.newProduct, ...state];
       changeMaxMinPrice(data);
       return data;
     }
     case "REMOVE_PRODUCT": {
-      let data = state.filter((e) => {return e.id != action.id});
+      let data = state.filter(e => {
+        return e.id != action.id;
+      });
       changeMaxMinPrice(data);
       return data;
     }
     case "READ_PRODUCT": {
       let data = state.slice();
-      for(let i = 0; i < data.length; i++){
-        if(data[i].id === action.id){
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].id === action.id) {
           data[i].isRead = !data[i].isRead;
         }
       }

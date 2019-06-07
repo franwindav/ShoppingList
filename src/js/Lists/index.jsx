@@ -1,42 +1,44 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+
 import List from "./List";
 
 class Lists extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      lists: []
-    };
-  }
   render() {
-    console.log(this.state.lists);
     return [
       <div key="1" id="createNewList">
+        <input
+          type="text"
+          placeholder="Введите название списка"
+          className="input"
+          ref={input => {
+            this.input = input;
+          }}
+        />
         <button onClick={this.createLists.bind(this)}>
           Создать новый лист покупок
         </button>
       </div>,
-      <ul key="2">{this.state.lists}</ul>
+      <ul key="2">{this.props.lists}</ul>
     ];
   }
-  addLists() {
-    let lists = [];
-    for (let i = 0; i < this.state.lists.length; i++) {
-      lists.push(
-        <li className="lists" key={i}>
-          this.state.lists[i]
-        </li>
-      );
-    }
-    return lists;
-  }
   createLists() {
-    let newLists = this.state.lists;
-    newLists.unshift(<List key={newLists.length}/>);
-    this.setState({
-      lists: newLists,
-    });
+    if (this.input.value.trim() !== "") {
+      let id = new Date().getTime();
+      let newList = <List title={this.input.value} key={id} id={id} />;
+      this.props.onAddList(newList);
+    }
+    this.input.value = "";
   }
 }
 
-export default Lists;
+export default connect(
+  lists => ({
+    lists: lists
+  }),
+  dispatch => ({
+    onAddList: list => {
+      dispatch({ type: "ADD_LIST", list });
+    }
+  })
+)(Lists);

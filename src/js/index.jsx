@@ -1,6 +1,7 @@
-import '../styles/index.less';
-import React from 'react';
-import {render} from 'react-dom';
-import Lists from './Lists';
+import React from "react";
+import { render } from "react-dom";
+import "../styles/index.less";
 
-render(<Lists/>, document.body.querySelector('#app'));
+import App from "./App";
+
+render(<App />, document.body.querySelector("#app"));
