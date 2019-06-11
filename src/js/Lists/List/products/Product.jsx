@@ -9,17 +9,24 @@ class Product extends PureComponent {
       isRead: false
     };
   }
+
   render() {
+
     let data = this.props.info;
     return (
-      <li className={this.state.isRead ? "product read" : "product"}>
-        <div id="title">
+      <div
+        className={this.state.isRead ? "product read" : "product"}
+        ref={li => {
+          this.product = li;
+        }}
+      >
+        <div className="title">
           <a className="title" href="#">
             {data.title}
           </a>
         </div>
         <div className="container">
-          <div id="prices">
+          <div className="prices">
             <div className="rating">
               <div className="stars">
                 <ul className="main-stars">
@@ -123,7 +130,7 @@ class Product extends PureComponent {
             />
           </svg>
         </div>
-      </li>
+      </div>
     );
   }
   numberStars() {
@@ -162,3 +169,4 @@ class Product extends PureComponent {
 }
 
 export default connect()(Product);
+

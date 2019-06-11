@@ -69,44 +69,20 @@ let initialState = [
     id: 4
   }
 ];
-changeMaxMinPrice(initialState);
 export default function products(state = initialState, action) {
   switch (action.type) {
     case "ADD_PRODUCT": {
-      let data = [action.newProduct, ...state];
-      changeMaxMinPrice(data);
+      let data = [Object.assign({}, action.newProduct), ...state];
       return data;
     }
     case "REMOVE_PRODUCT": {
       let data = state.filter(e => {
         return e.id != action.id;
       });
-      changeMaxMinPrice(data);
-      return data;
-    }
-    case "READ_PRODUCT": {
-      let data = state.slice();
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].id === action.id) {
-          data[i].isRead = !data[i].isRead;
-        }
-      }
       return data;
     }
     default: {
       return state;
     }
   }
-}
-function changeMaxMinPrice(state) {
-  let mas = [];
-  for (let i = 0; i < state.length; i++) {
-    if (state[i].isDiscount) {
-      mas.push(state[i].priceDiscount);
-      continue;
-    }
-    mas.push(state[i].price);
-  }
-  MinMax.max = Math.max(...mas);
-  MinMax.min = Math.min(...mas);
 }

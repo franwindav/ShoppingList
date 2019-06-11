@@ -6,7 +6,7 @@ import List from "./List";
 class Lists extends Component {
   render() {
     return [
-      <div key="1" id="createNewList">
+      <div key="div" id="createNewList">
         <input
           type="text"
           placeholder="Введите название списка"
@@ -15,17 +15,17 @@ class Lists extends Component {
             this.input = input;
           }}
         />
-        <button onClick={this.createLists.bind(this)}>
+        <button onClick={this.createLists.bind(this)} className="button1">
           Создать новый лист покупок
         </button>
       </div>,
-      <ul key="2">{this.props.lists}</ul>
+      <ul key="ul">{this.props.lists}</ul>
     ];
   }
   createLists() {
     if (this.input.value.trim() !== "") {
       let id = new Date().getTime();
-      let newList = <List title={this.input.value} key={id} id={id} />;
+      let newList = <List key={id} id={id} title={this.input.value} />;
       this.props.onAddList(newList);
     }
     this.input.value = "";

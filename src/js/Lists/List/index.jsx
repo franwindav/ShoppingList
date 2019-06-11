@@ -20,8 +20,13 @@ class List extends Component {
     };
   }
   render() {
+    let index;
+    let { id } = this.props;
+    this.props.lists.forEach(function(e, i) {
+      if (e.props.id === id) index = i;
+    });
     return (
-      <li>
+      <div className="app">
         <div className="title-list">
           {this.props.title}
           <div
@@ -44,12 +49,12 @@ class List extends Component {
         </div>
         <div className="list">
           <Provider store={this.state.store}>
-            <Filters />
-            <Products />
-            <AddProduct />
+            <Filters index={index} />
+            <Products index={index} />
+            <AddProduct index={index} />
           </Provider>
         </div>
-      </li>
+      </div>
     );
   }
   removeList() {
@@ -58,4 +63,6 @@ class List extends Component {
   }
 }
 
-export default connect()(List);
+export default connect(lists => ({
+  lists: lists
+}))(List);

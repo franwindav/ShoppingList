@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-let newProduct = {};
+let newProduct;
 
 class AddProduct extends Component {
   render() {
-    console.log(this.props);
+    newProduct = {};
     return (
-      <ul id="add-products">
+      <ul className="add-products">
         <li className="information">
           <div className="title">
             <h3>Продукт</h3>
@@ -76,7 +76,7 @@ class AddProduct extends Component {
           <ul className="price">
             <li>
               <input
-                type="text"
+                type="number"
                 className="input"
                 ref={input => {
                   this.priceInput = input;
@@ -86,7 +86,7 @@ class AddProduct extends Component {
             </li>
             <li>
               <input
-                type="text"
+                type="number"
                 className="input"
                 ref={input => {
                   this.priceDiscountInput = input;
@@ -97,11 +97,60 @@ class AddProduct extends Component {
           </ul>
         </li>
         <li>
-          <button className="add-product">Добавить</button>
-          <button className="clear">Сбросить</button>
+          <button
+            className="add-product button1"
+            onClick={this.addProduct.bind(this)}
+          >
+            Добавить
+          </button>
+          <button className="clear button2" onClick={this.clearAll.bind(this)}>
+            Сбросить
+          </button>
         </li>
       </ul>
     );
+  }
+  clearAll() {
+    let checkbox = document
+      .querySelectorAll(`.app`)
+      [this.props.index].querySelectorAll(`.add-products .checkbox`);
+    for (let i = 0; i < checkbox.length; i++) {
+      checkbox[i].checked = false;
+    }
+    this.titleInput.value = "";
+    this.aboutInput.value = "";
+    this.ratingInput.value = "";
+    this.ratingCountInput.value = "";
+    this.priceInput.value = "";
+    this.priceDiscountInput.value = "";
+  }
+  addProduct() {
+    newProduct["title"] = this.titleInput.value;
+    newProduct["about"] = this.aboutInput.value;
+    newProduct["rating"] =
+      Number(this.ratingInput.value) > 0
+        ? Number(this.ratingInput.value) >= 5
+          ? 1
+          : Number(this.ratingInput.value) / 5
+        : 0;
+    newProduct["price"] = Number(this.priceInput.value);
+    newProduct["isDiscount"] !== undefined && newProduct["isDiscount"]
+      ? (newProduct["priceDiscount"] = Number(this.priceDiscountInput.value))
+      : "";
+    newProduct["id"] = new Date().getTime();
+    newProduct["numberRatings"] =
+      Number(this.ratingCountInput.value) > 0
+        ? Number(this.ratingCountInput.value)
+        : 0;
+    newProduct["isDiscount"] !== undefined &&
+    newProduct["isDiscount"] &&
+    newProduct["priceDiscount"] !== undefined
+      ? (newProduct["percentageDiscount"] =
+          100 -
+          Math.round((newProduct["priceDiscount"] / newProduct["price"]) * 100))
+      : "";
+    this.props.dispatch({ type: "ADD_PRODUCT", newProduct });
+    this.clearAll();
   }
 }
 

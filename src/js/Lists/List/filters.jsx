@@ -7,7 +7,7 @@ class Filters extends Component {
   render() {
     filters = Object.assign({}, this.props.filters);
     return (
-      <ul id="filters">
+      <ul className="filters">
         <li className="price">
           <h3>Цена</h3>
           <div className="container">
@@ -16,10 +16,8 @@ class Filters extends Component {
               ref={input => {
                 this.priceInput1 = input;
               }}
-              placeholder={"От " + MinMax.min}
+              placeholder={"От"}
               type="number"
-              min={MinMax.min}
-              max={MinMax.max}
             />{" "}
             -{" "}
             <input
@@ -27,10 +25,8 @@ class Filters extends Component {
               ref={input => {
                 this.priceInput2 = input;
               }}
-              placeholder={"До " + MinMax.max}
+              placeholder={"До"}
               type="number"
-              min={MinMax.min}
-              max={MinMax.max}
             />
           </div>
         </li>
@@ -54,13 +50,13 @@ class Filters extends Component {
         </li>
         <li>
           <button
-            className="change-filters"
+            className="change-filters button1"
             onClick={this.changeFilters.bind(this)}
           >
             Применить
           </button>
           <button
-            className="clear-filters"
+            className="clear-filters button2"
             onClick={this.clearFilters.bind(this)}
           >
             Сбросить
@@ -74,27 +70,21 @@ class Filters extends Component {
       filters["price"] = [];
     }
     let first = Number(this.priceInput1.value);
-    let second = Number(this.priceInput2.value);
+    let second =
+      this.priceInput2.value.trim() !== ""
+        ? Number(this.priceInput2.value)
+        : Number.MAX_SAFE_INTEGER;
+
     filters["price"] = [];
-    if (
-      first < MinMax.min ||
-      first > MinMax.max ||
-      first === 0 ||
-      second < first
-    ) {
+    if (first === 0 || second < first) {
       this.priceInput1.value = "";
-      filters["price"].push(MinMax.min);
+      filters["price"].push(0);
     } else {
       filters["price"].push(first);
     }
-    if (
-      second < MinMax.min ||
-      second > MinMax.max ||
-      first === 0 ||
-      second < first
-    ) {
+    if (first === 0 || second < first) {
       this.priceInput2.value = "";
-      filters["price"].push(MinMax.max);
+      filters["price"].push(Number.MAX_SAFE_INTEGER);
     } else {
       filters["price"].push(second);
     }
@@ -104,7 +94,9 @@ class Filters extends Component {
     this.props.onChangeFilters(filters);
   }
   uncheckAll() {
-    let checkbox = document.querySelectorAll("#filters .checkbox");
+    let checkbox = document
+      .querySelectorAll(`.app`)
+      [this.props.index].querySelectorAll(`.filters .checkbox`);
     for (let i = 0; i < checkbox.length; i++) {
       checkbox[i].checked = false;
     }
@@ -144,7 +136,8 @@ function App(props) {
 
 export default connect(
   state => ({
-    filters: state.filterProducts
+    filters: state.filterProducts,
+    products: state.products
   }),
   dispatch => ({
     onChangeFilters: filters => {

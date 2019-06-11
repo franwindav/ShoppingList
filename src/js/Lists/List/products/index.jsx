@@ -26,12 +26,13 @@ class Products extends Component {
           return false;
         });
     }
-
     return (
-      <ul id="products">
-        {products.map((e, i) => {
-          return <Product key={i} info={e} />;
-        })}
+      <ul className="products">
+        {products.map((e, i) => (
+          <li className="dragAndDrop" key={e.id}>
+            <Product info={e} />
+          </li>
+        ))}
       </ul>
     );
   }

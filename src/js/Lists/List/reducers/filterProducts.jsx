@@ -1,10 +1,15 @@
 const initialState = {};
 
 export default function filterProducts(state = initialState, action) {
-  if (action.type === "CHANGE_FILTERS") {
-    return action.filters;
-  } else if (action.type === "CLEAR_FILTERS") {
-    return {};
+  switch (action.type) {
+    case "CHANGE_FILTERS": {
+      return action.filters;
+    }
+    case "CLEAR_FILTERS": {
+      return {};
+    }
+    default: {
+      return state;
+    }
   }
-  return state;
 }
