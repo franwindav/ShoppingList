@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-import List from "./List";
+import List from "List";
 
 class Lists extends Component {
   render() {
     return [
-      <div key="1" id="createNewList">
+      <div key="div" id="createNewList">
         <input
           type="text"
           placeholder="Введите название списка"
@@ -15,17 +16,23 @@ class Lists extends Component {
             this.input = input;
           }}
         />
-        <button onClick={this.createLists.bind(this)}>
+        <button onClick={this.createLists.bind(this)} className="button1">
           Создать новый лист покупок
         </button>
       </div>,
-      <ul key="2">{this.props.lists}</ul>
+      <TransitionGroup component={"ul"} key="ul">
+        {this.props.lists}
+      </TransitionGroup>
     ];
   }
   createLists() {
     if (this.input.value.trim() !== "") {
       let id = new Date().getTime();
-      let newList = <List title={this.input.value} key={id} id={id} />;
+      let newList = (
+        <CSSTransition timeout={1000} key={id} id={id} classNames="app">
+          <List title={this.input.value} />
+        </CSSTransition>
+      );
       this.props.onAddList(newList);
     }
     this.input.value = "";

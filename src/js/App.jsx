@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import Lists from "./Lists";
+import Lists from "Lists";
 
 function lists(state = [], action) {
   switch (action.type) {
