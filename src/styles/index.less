@@ -9,6 +9,9 @@ a {
 body {
   padding: 10px;
   background-color: #f6f6f6;
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
 }
 #app {
   ul {
@@ -137,12 +140,12 @@ body {
     }
     &.app-enter.app-enter-active {
       opacity: 1;
-      height: 522px;
+      height: 100%;
       transition: opacity 1s ease-in, height 1s ease-in;
     }
     &.app-exit {
       opacity: 1;
-      height: 522px;
+      height: 100%;
     }
     &.app-exit.app-exit-active {
       opacity: 0;

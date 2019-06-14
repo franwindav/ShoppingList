@@ -58,10 +58,12 @@ class Products extends Component {
     $(selector)
       .eq(i)
       .css("z-index", 100);
+    $("body").css("overflow", "hidden");
     $(document.body).css("-webkit-user-select", "none");
     let list = [...this.props.data];
     let shiftY = e.pageY;
     let lastTop = 0;
+    let lastScroll = 0;
     function moveAt(e) {
       $(selector)
         .eq(i)
@@ -71,6 +73,7 @@ class Products extends Component {
         let value = list[i];
         list.splice(i, 1);
         list.splice(i + 1, 0, value);
+        update(list);
         $(selector)
           .eq(i)
           .removeClass("animate")
@@ -84,12 +87,12 @@ class Products extends Component {
         });
         lastTop = 0;
         shiftY = e.pageY;
-        update(list);
         return;
       } else if (e.pageY - shiftY < 0 && -newTop >= height) {
         let value = list[i];
         list.splice(i, 1);
         list.splice(i - 1, 0, value);
+        update(list);
         $(selector)
           .eq(i)
           .removeClass("animate")
@@ -103,7 +106,6 @@ class Products extends Component {
         });
         lastTop = 0;
         shiftY = e.pageY;
-        update(list);
         return;
       }
       if (i !== 0 && i !== list.length - 1) {
@@ -125,7 +127,8 @@ class Products extends Component {
         $(selector)
           .eq(i)
           .css("top", newTop);
-      } else if (i === 0) {
+      }
+      if (i === 0) {
         newTop = newTop <= 0 ? 0 : newTop;
         $(selector)
           .eq(i)
@@ -133,7 +136,8 @@ class Products extends Component {
         $(selector)
           .eq(i + 1)
           .css("top", -newTop % height);
-      } else if (i === list.length - 1) {
+      }
+      if (i === list.length - 1) {
         newTop = newTop >= 0 ? 0 : newTop;
         $(selector)
           .eq(i)
@@ -145,7 +149,6 @@ class Products extends Component {
       lastTop = newTop;
       shiftY = e.pageY;
     }
-
     document.onmousemove = function(e) {
       moveAt(e);
     };
@@ -155,6 +158,7 @@ class Products extends Component {
         .addClass("animate");
       document.onmousemove = null;
       document.onmouseup = null;
+      $("body").css("overflow", "auto");
       let time;
       let newTop = lastTop + e.pageY - shiftY;
       $(document.body).css("-webkit-user-select", "auto");
