@@ -133,25 +133,10 @@ body {
     }
   }
   .app {
+    display: none;
+    margin-bottom: 100px;
+    opacity: 0;
     overflow: hidden;
-    &.app-enter {
-      opacity: 0;
-      height: 0;
-    }
-    &.app-enter.app-enter-active {
-      opacity: 1;
-      height: 100%;
-      transition: opacity 1s ease-in, height 1s ease-in;
-    }
-    &.app-exit {
-      opacity: 1;
-      height: 100%;
-    }
-    &.app-exit.app-exit-active {
-      opacity: 0;
-      height: 0;
-      transition: opacity 1s ease-in, height 1s ease-in;
-    }
     .title-list {
       display: flex;
       justify-content: center;
@@ -165,8 +150,55 @@ body {
       }
     }
     .list {
+      position: relative;
       display: flex;
       justify-content: center;
+      .sortPurchases {
+        position: absolute;
+        left: 300px;
+        top: -30px;
+        .sortText {
+          font-size: 14px;
+          font-weight: 600;
+          font-family: Didact Gothic, sans-serif;
+          span {
+            font-style: italic;
+            color: #0d61af;
+            transition: color 500ms 50ms ease-in-out;
+            &:hover,
+            &.active {
+              color: #fc7b08;
+            }
+          }
+        }
+        .sortingPanel {
+          position: absolute;
+          top: 25px;
+          left: 110px;
+          width: max-content;
+          padding: 3px 20px 6px 30px;
+          background: #fff;
+          box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.16);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: 500;
+          font-family: Didact Gothic, sans-serif;
+          transition: opacity 600ms 50ms ease-in-out;
+          opacity: 0;
+          z-index: 200;
+          &.active {
+            opacity: 1;
+          }
+          li:not(:last-child) {
+            margin-bottom: 8px;
+          }
+          li > label {
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
       .filters {
         min-width: 250px;
         height: min-content;
@@ -199,7 +231,6 @@ body {
         flex-direction: column;
         width: 700px;
         margin-left: 15px;
-        margin-bottom: 100px;
         .dragAndDrop {
           position: relative;
           overflow: hidden;

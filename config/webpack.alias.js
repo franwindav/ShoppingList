@@ -3,8 +3,10 @@ const src = path.join(__dirname, "../src");
 module.exports = {
   IMG: `${src}/img`,
   Styles: `${src}/styles`,
-  Lists: `${src}/js/lists`,
-  List: `${src}/js/lists/list`,
-  Products: `${src}/js/lists/list/products`,
-  Reducers: `${src}/js/lists/list/reducers`
+  ShoppingList: `${src}/js/app/shoppingList`,
+  Components: `${src}/js/app/components`,
+  Purchases: `${src}/js/app/shoppingList/purchases`,
+  SVG: `${src}/js/svg`,
+  StoreWithShoppingList: `${src}/js/stores/storeWithShoppingList`,
+  StoreWithShoppingLists: `${src}/js/stores/storeWithShoppingLists`
 };

@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-let newProduct;
+import Checkboxes from "Components/checkboxes";
 
-class AddProduct extends Component {
+class AddPurchase extends Component {
+  constructor(props) {
+    super(props);
+    this.newPurchase = {};
+  }
+
   render() {
-    newProduct = {};
     return (
       <ul className="add-products">
         <li className="information">
@@ -33,19 +37,31 @@ class AddProduct extends Component {
               <li className="stock">
                 <h3>Акции</h3>
                 <ul>
-                  <App meta={"isDiscount"} data={["Товар со скидкой"]} />
+                  <Checkboxes
+                    meta={"isDiscount"}
+                    data={["Товар со скидкой"]}
+                    onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+                  />
                 </ul>
               </li>
               <li className="New">
                 <h3>Новые</h3>
                 <ul>
-                  <App meta={"new"} data={["Недавно добавленные"]} />
+                  <Checkboxes
+                    meta={"new"}
+                    data={["Недавно добавленные"]}
+                    onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+                  />
                 </ul>
               </li>
               <li className="urgency">
                 <h3>Срочность</h3>
                 <ul>
-                  <App meta={"urgency"} data={["Срочно"]} />
+                  <Checkboxes
+                    meta={"urgency"}
+                    data={["Срочно"]}
+                    onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+                  />
                 </ul>
               </li>
               <li className="rating">
@@ -99,7 +115,7 @@ class AddProduct extends Component {
         <li>
           <button
             className="add-product button1"
-            onClick={this.addProduct.bind(this)}
+            onClick={this.addPurchase.bind(this)}
           >
             Добавить
           </button>
@@ -110,6 +126,10 @@ class AddProduct extends Component {
       </ul>
     );
   }
+  onChangeCheckbox(meta) {
+    this.newPurchase[meta] = !this.newPurchase[meta];
+  }
+  // Очистить всё
   clearAll() {
     let checkbox = document
       .querySelectorAll(".app")
@@ -123,56 +143,48 @@ class AddProduct extends Component {
     this.ratingCountInput.value = "";
     this.priceInput.value = "";
     this.priceDiscountInput.value = "";
+    this.newPurchase = new Object();
   }
-  addProduct() {
-    newProduct["title"] = this.titleInput.value;
-    newProduct["about"] = this.aboutInput.value;
-    newProduct["rating"] =
+  // Добавить новую покупку и очищает поля
+  addPurchase() {
+    let { newPurchase } = this;
+    let { filterPurchases } = this.props;
+    newPurchase["title"] = this.titleInput.value;
+    newPurchase["about"] = this.aboutInput.value;
+    newPurchase["rating"] =
       Number(this.ratingInput.value) > 0
         ? Number(this.ratingInput.value) >= 5
           ? 1
           : Number(this.ratingInput.value) / 5
         : 0;
-    newProduct["price"] = Number(this.priceInput.value);
-    newProduct["isDiscount"] !== undefined && newProduct["isDiscount"]
-      ? (newProduct["priceDiscount"] = Number(this.priceDiscountInput.value))
+    newPurchase["price"] = Number(this.priceInput.value);
+    newPurchase["isDiscount"] !== undefined && newPurchase["isDiscount"]
+      ? (newPurchase["priceDiscount"] = Number(this.priceDiscountInput.value))
       : "";
-    newProduct["id"] = new Date().getTime();
-    newProduct["numberRatings"] =
+    newPurchase["id"] = new Date().getTime();
+    newPurchase["numberRatings"] =
       Number(this.ratingCountInput.value) > 0
         ? Number(this.ratingCountInput.value)
         : 0;
-    newProduct["isDiscount"] !== undefined &&
-    newProduct["isDiscount"] &&
-    newProduct["priceDiscount"] !== undefined
-      ? (newProduct["percentageDiscount"] =
+    newPurchase["isDiscount"] !== undefined &&
+    newPurchase["isDiscount"] &&
+    newPurchase["priceDiscount"] !== undefined
+      ? (newPurchase["percentageDiscount"] =
           100 -
-          Math.round((newProduct["priceDiscount"] / newProduct["price"]) * 100))
+          Math.round(
+            (newPurchase["priceDiscount"] / newPurchase["price"]) * 100
+          ))
       : "";
-    this.props.dispatch({ type: "ADD_PRODUCT", newProduct });
+    console.log("TCL: AddPurchase -> addPurchase -> newPurchase", newPurchase);
+    this.props.dispatch({
+      type: "ADD_PRODUCT",
+      newPurchase,
+      filterPurchases
+    });
     this.clearAll();
   }
 }
 
-function App(props) {
-  return props.data.map((e, i) => {
-    i++;
-    return (
-      <li key={i}>
-        <label>
-          <input
-            onClick={() => {
-              newProduct[props.meta] = !newProduct[props.meta];
-            }}
-            type="checkbox"
-            className="checkbox"
-          />
-          <div className="check"> </div>
-          <span>{e}</span>
-        </label>
-      </li>
-    );
-  });
-}
-
-export default connect()(AddProduct);
+export default connect(state => ({
+  filterPurchases: state.filterPurchases
+}))(AddPurchase);

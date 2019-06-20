@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 
-let filters;
+import Checkboxes from "Components/checkboxes";
 
-class Filters extends Component {
+class FiltersPurchases extends Component {
+  constructor(props) {
+    super(props);
+    this.filters = {};
+  }
+
   render() {
-    filters = Object.assign({}, this.props.filters);
+    this.filters = Object.assign({}, this.props.filterPurchases);
     return (
       <ul className="filters">
         <li className="price">
@@ -18,8 +23,8 @@ class Filters extends Component {
               }}
               placeholder={"От"}
               type="number"
-            />{" "}
-            -{" "}
+            />
+            {"  -  "}
             <input
               className="input"
               ref={input => {
@@ -33,19 +38,31 @@ class Filters extends Component {
         <li className="stock">
           <h3>Акции</h3>
           <ul>
-            <App meta={"isDiscount"} data={["Товар со скидкой"]} />
+            <Checkboxes
+              meta={"isDiscount"}
+              data={["Товар со скидкой"]}
+              onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+            />
           </ul>
         </li>
         <li className="New">
           <h3>Новые</h3>
           <ul>
-            <App meta={"new"} data={["Недавно добавленные"]} />
+            <Checkboxes
+              meta={"new"}
+              data={["Недавно добавленные"]}
+              onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+            />
           </ul>
         </li>
         <li className="urgency">
           <h3>Срочность</h3>
           <ul>
-            <App meta={"urgency"} data={["Срочно"]} />
+            <Checkboxes
+              meta={"urgency"}
+              data={["Срочно"]}
+              onChangeCheckbox={this.onChangeCheckbox.bind(this)}
+            />
           </ul>
         </li>
         <li>
@@ -65,9 +82,17 @@ class Filters extends Component {
       </ul>
     );
   }
+
+  // Изменение checkbox (для компонента Checkboxes)
+  onChangeCheckbox(meta, i) {
+    if (this.filters[meta] === undefined) this.filters[meta] = [];
+    let gap = this.filters[meta];
+    gap.includes(i) ? gap.splice(gap.indexOf(i), 1) : gap.push(i);
+  }
+  // Изменение цены
   changePrice() {
-    if (filters["price"] === undefined) {
-      filters["price"] = [];
+    if (this.filters["price"] === undefined) {
+      this.filters["price"] = [];
     }
     let first = Number(this.priceInput1.value);
     let second =
@@ -75,25 +100,27 @@ class Filters extends Component {
         ? Number(this.priceInput2.value)
         : Number.MAX_SAFE_INTEGER;
 
-    filters["price"] = [];
+    this.filters["price"] = [];
     if (first === 0 || second < first) {
       this.priceInput1.value = "";
-      filters["price"].push(0);
+      this.filters["price"].push(0);
     } else {
-      filters["price"].push(first);
+      this.filters["price"].push(first);
     }
     if (first === 0 || second < first) {
       this.priceInput2.value = "";
-      filters["price"].push(Number.MAX_SAFE_INTEGER);
+      this.filters["price"].push(Number.MAX_SAFE_INTEGER);
     } else {
-      filters["price"].push(second);
+      this.filters["price"].push(second);
     }
   }
+  // Изменение фильтров
   changeFilters() {
     this.changePrice();
-    this.props.onChangeFilters(filters);
+    this.props.onChangeFilters(this.filters);
   }
-  uncheckAll() {
+  // uncheck all checkbox
+  uncheckAllCheckboxes() {
     let checkbox = document
       .querySelectorAll(`.app`)
       [this.props.index].querySelectorAll(`.filters .checkbox`);
@@ -101,43 +128,18 @@ class Filters extends Component {
       checkbox[i].checked = false;
     }
   }
+  // очистить фильтры
   clearFilters() {
     this.priceInput1.value = "";
     this.priceInput2.value = "";
-    this.uncheckAll();
-    this.props.onClearFilters(filters);
+    this.uncheckAllCheckboxes();
+    this.props.onClearFilters(this.filters);
   }
-}
-
-function App(props) {
-  return props.data.map((e, i) => {
-    i++;
-    return (
-      <li key={i}>
-        <label>
-          <input
-            className="input"
-            onClick={() => {
-              if (filters[props.meta] === undefined) filters[props.meta] = [];
-              let gap = filters[props.meta];
-              gap.includes(i) ? gap.splice(gap.indexOf(i), 1) : gap.push(i);
-              filters[props.meta] = gap;
-            }}
-            type="checkbox"
-            className="checkbox"
-          />
-          <div className="check"> </div>
-          <span>{e}</span>
-        </label>
-      </li>
-    );
-  });
 }
 
 export default connect(
   state => ({
-    filters: state.filterProducts,
-    products: state.products
+    filterPurchases: state.filterPurchases
   }),
   dispatch => ({
     onChangeFilters: filters => {
@@ -147,4 +149,4 @@ export default connect(
       dispatch({ type: "CLEAR_FILTERS" });
     }
   })
-)(Filters);
+)(FiltersPurchases);
