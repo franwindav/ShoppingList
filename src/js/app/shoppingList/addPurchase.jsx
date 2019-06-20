@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import $ from "jquery";
 
 import Checkboxes from "Components/checkboxes";
 
@@ -106,6 +107,7 @@ class AddPurchase extends Component {
                 className="input"
                 ref={input => {
                   this.priceDiscountInput = input;
+                  $(this.priceDiscountInput).fadeToggle();
                 }}
                 placeholder="Цена со скидкой"
               />
@@ -128,6 +130,9 @@ class AddPurchase extends Component {
   }
   onChangeCheckbox(meta) {
     this.newPurchase[meta] = !this.newPurchase[meta];
+    if (meta === "isDiscount") {
+      $(this.priceDiscountInput).fadeToggle();
+    }
   }
   // Очистить всё
   clearAll() {
@@ -143,11 +148,20 @@ class AddPurchase extends Component {
     this.ratingCountInput.value = "";
     this.priceInput.value = "";
     this.priceDiscountInput.value = "";
+    $(this.priceDiscountInput).fadeOut();
     this.newPurchase = new Object();
   }
   // Добавить новую покупку и очищает поля
   addPurchase() {
     let { newPurchase } = this;
+    if (
+      this.titleInput.value.trim() == "" ||
+      this.priceInput.value.trim() == "" ||
+      (this.priceDiscountInput.value.trim() == "" && newPurchase["isDiscount"])
+    ) {
+      console.log();
+      return;
+    }
     let { filterPurchases } = this.props;
     newPurchase["title"] = this.titleInput.value;
     newPurchase["about"] = this.aboutInput.value;
@@ -158,7 +172,7 @@ class AddPurchase extends Component {
           : Number(this.ratingInput.value) / 5
         : 0;
     newPurchase["price"] = Number(this.priceInput.value);
-    newPurchase["isDiscount"] !== undefined && newPurchase["isDiscount"]
+    newPurchase["isDiscount"]
       ? (newPurchase["priceDiscount"] = Number(this.priceDiscountInput.value))
       : "";
     newPurchase["id"] = new Date().getTime();
@@ -166,9 +180,7 @@ class AddPurchase extends Component {
       Number(this.ratingCountInput.value) > 0
         ? Number(this.ratingCountInput.value)
         : 0;
-    newPurchase["isDiscount"] !== undefined &&
-    newPurchase["isDiscount"] &&
-    newPurchase["priceDiscount"] !== undefined
+    this.priceDiscountInput.value.trim() == "" && newPurchase["isDiscount"]
       ? (newPurchase["percentageDiscount"] =
           100 -
           Math.round(

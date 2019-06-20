@@ -43,7 +43,7 @@ class Purchase extends PureComponent {
                   <p>
                     <s>{data.price}</s> &#8381;
                   </p>
-                  <div className="percent">-{data.percentageDiscount}%</div>
+                  <div className="percent">{data.percentageDiscount}%</div>
                 </div>,
                 <div key={2} className="price">
                   {data.priceDiscount}
