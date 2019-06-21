@@ -1,6 +1,6 @@
 let a =
   "Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то Какой-то текст какой-то текст какой-то nекст какой-то ";
-let AllPurchases = [
+const initinalPurchases = [
   {
     title:
       "Оперативная память Corsair Vengeance LPX [CMK64GX4M8A2666C16] 64 ГБ",
@@ -74,8 +74,12 @@ let AllPurchases = [
   if (b.isDiscount) price[1] = "priceDiscount";
   return a[price[0]] > b[price[1]] ? 1 : -1;
 });
+let initinalState = {
+  filteredPurchases: initinalPurchases,
+  allPurchases: initinalPurchases
+};
 const sortOrder = ["isDiscount", "urgency", "new"];
-export default function purchases(state = AllPurchases, action) {
+export default function purchases(state = initinalState, action) {
   //
   const sortingPurchases = (purchases, filterPurchases) =>
     purchases.sort((a, b) => {
@@ -119,61 +123,57 @@ export default function purchases(state = AllPurchases, action) {
   };
   switch (action.type) {
     case "ADD_PRODUCT": {
-      AllPurchases = [Object.assign({}, action.newPurchase), ...AllPurchases];
-      AllPurchases = sortingPurchases(AllPurchases, action.filterPurchases);
-      let data = AllPurchases.slice();
-      data = filterPurchases(data, action.filterPurchases);
-      return data;
+      let allPurchases = [
+        Object.assign({}, action.newPurchase),
+        ...state.allPurchases
+      ];
+      allPurchases = sortingPurchases(allPurchases, action.filterPurchases);
+      let filteredPurchases = allPurchases.slice();
+      filteredPurchases = filterPurchases(
+        filteredPurchases,
+        action.filterPurchases
+      );
+
+      return { allPurchases, filteredPurchases };
     }
     case "REMOVE_PRODUCT": {
-      let data = state.filter(e => {
+      let filteredPurchases = state.filteredPurchases.filter(e => {
         return e.id != action.id;
       });
-      AllPurchases = AllPurchases.filter(e => {
+      let allPurchases = state.allPurchases.filter(e => {
         return e.id != action.id;
       });
-      return data;
+      return { allPurchases, filteredPurchases };
     }
     case "CHANGE_PRODUCT_POSITION": {
-      return action.list.slice();
+      let allPurchases = [...state.allPurchases];
+      let filteredPurchases = action.list.slice();
+      return { allPurchases, filteredPurchases };
     }
     case "CHANGE_SORTING": {
-      let data = [...state];
-      AllPurchases = sortingPurchases(AllPurchases, action.filterPurchases);
-      data = sortingPurchases(data, action.filterPurchases);
-      return data;
+      let allPurchases = [...state.allPurchases];
+      let filteredPurchases = [...state.filteredPurchases];
+      filteredPurchases = sortingPurchases(
+        filteredPurchases,
+        action.filterPurchases
+      );
+      allPurchases = sortingPurchases(allPurchases, action.filterPurchases);
+      return { allPurchases, filteredPurchases };
     }
     case "CHANGE_FILTERS": {
-      let data = AllPurchases.slice();
+      let allPurchases = [...state.allPurchases];
+      let filteredPurchases = allPurchases.slice();
 
-      data = filterPurchases(data, action.filters);
-      return data;
+      filteredPurchases = filterPurchases(filteredPurchases, action.filters);
+      return { allPurchases, filteredPurchases };
     }
     case "CLEAR_FILTERS": {
-      let data = AllPurchases.slice();
-      return data;
+      let allPurchases = [...state.allPurchases];
+      let filteredPurchases = allPurchases.slice();
+      return { allPurchases, filteredPurchases };
     }
     default: {
       return state;
     }
   }
 }
-// let products =
-//   filters["price"] !== undefined
-//     ? data.filter(e => {
-//       return e["isDiscount"]
-//         ? e["priceDiscount"] >= filters["price"][0] &&
-//         e["priceDiscount"] <= filters["price"][1]
-//         : e["price"] >= filters["price"][0] &&
-//         e["price"] <= filters["price"][1];
-//     })
-//     : data.slice();
-// for (let i = 0; i < sortOrder.length; i++) {
-//   if (filters[sortOrder[i]] !== undefined && filters[sortOrder[i]].length)
-//     products = products.filter(e => {
-//       for (let j = 0; j < filters[sortOrder[i]].length; j++) {
-//         if (filters[sortOrder[i]][j] == e[sortOrder[i]]) return true;
-//       }
-//       return false;
-//     });
-// }

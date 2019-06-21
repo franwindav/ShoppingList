@@ -11,13 +11,17 @@ import reducers from "StoreWithShoppingList";
 import AddPurchase from "./addPurchase";
 import Cross from "SVG/cross";
 
-let index;
-const store = createStore(
-  reducers,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
-
 class ShoppingList extends Component {
+  constructor(props) {
+    super(props);
+    this.store = createStore(
+      reducers,
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+        window.__REDUX_DEVTOOLS_EXTENSION__()
+    );
+    this.index;
+  }
+
   render() {
     this.indexInitialization(this);
     return (
@@ -32,11 +36,11 @@ class ShoppingList extends Component {
           </div>
         </div>
         <div className="list">
-          <Provider store={store}>
-            <SortPurchases index={index} />
-            <FiltersPurchases index={index} />
-            <Purchases index={index} />
-            <AddPurchase index={index} />
+          <Provider store={this.store}>
+            <SortPurchases index={this.index} />
+            <FiltersPurchases index={this.index} />
+            <Purchases index={this.index} />
+            <AddPurchase index={this.index} />
           </Provider>
         </div>
       </li>
@@ -45,8 +49,8 @@ class ShoppingList extends Component {
   // Узнать индекс листа
   indexInitialization(e) {
     let { id } = e.props;
-    e.props.shoppingLists.forEach(function(e, i) {
-      if (e.props.id === id) index = i;
+    e.props.shoppingLists.forEach((e, i) => {
+      if (e.props.id === id) this.index = i;
     });
   }
   // Компонент появился
@@ -55,8 +59,8 @@ class ShoppingList extends Component {
   }
   // Анимация добавления
   animateAddList() {
-    $(`.app:eq(${index})`).slideDown({ duration: 400, queue: false });
-    $(`.app:eq(${index})`).animate(
+    $(`.app:eq(${this.index})`).slideDown({ duration: 400, queue: false });
+    $(`.app:eq(${this.index})`).animate(
       { opacity: 1 },
       { duration: 600, queue: false }
     );
@@ -64,11 +68,11 @@ class ShoppingList extends Component {
   // Анимация при удалении
   animatedRemoveList() {
     let { dispatch, id } = this.props;
-    $(`.app:eq(${index})`).animate(
+    $(`.app:eq(${this.index})`).animate(
       { opacity: 0 },
       { duration: 400, queue: false }
     );
-    $(`.app:eq(${index})`).slideUp({
+    $(`.app:eq(${this.index})`).slideUp({
       duration: 600,
       queue: false,
       done: () => {

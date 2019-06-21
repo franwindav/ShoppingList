@@ -196,7 +196,7 @@ class Purchases extends Component {
 
 export default connect(
   state => ({
-    data: state.purchases,
+    data: state.purchases.filteredPurchases,
     filters: state.filterPurchases
   }),
   dispatch => ({
